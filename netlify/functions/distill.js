@@ -32,24 +32,59 @@ function httpsPost(body) {
     };
     const req = https.request(options, (res) => {
       let responseData = '';
-      res.on('data', chunk => responseData += chunk);
-      res.on('end', () => resolve({ status: res.statusCode, body: responseData }));
+      res.on('data', chunk => { responseData += chunk; });
+      res.on('end', () => {
+        console.log('Groq status:', res.statusCode);
+        console.log('Groq response:', responseData.slice(0, 200));
+        resolve({ status: res.statusCode, body: responseData });
+      });
     });
-    req.on('error', reject);
+    req.on('error', (e) => {
+      console.error('Request error:', e.message);
+      reject(e);
+    });
+    req.setTimeout(30000, () => {
+      req.destroy();
+      reject(new Error('Request timed out'));
+    });
     req.write(data);
     req.end();
   });
 }
 
 exports.handler = async function(event) {
+  console.log('Function called, method:', event.httpMethod);
+
+  // Handle CORS preflight
+  if (event.httpMethod === 'OPTIONS') {
+    return {
+      statusCode: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS'
+      },
+      body: ''
+    };
+  }
+
   // Only allow POST
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: JSON.stringify({ error: { message: 'Method not allowed' } }) };
+    return {
+      statusCode: 405,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: { message: 'Method not allowed' } })
+    };
   }
 
   // Check API key is configured
   if (!process.env.GROQ_API_KEY) {
-    return { statusCode: 500, body: JSON.stringify({ error: { message: 'API not configured' } }) };
+    console.error('GROQ_API_KEY not set');
+    return {
+      statusCode: 500,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ error: { message: 'API key not configured on server' } })
+    };
   }
 
   // Rate limit by IP
@@ -63,12 +98,27 @@ exports.handler = async function(event) {
   }
 
   try {
-    const body = JSON.parse(event.body);
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: { message: 'Empty request body' } })
+      };
+    }
 
-    // Safety: cap max_tokens to prevent abuse
+    const body = JSON.parse(event.body);
     if (body.max_tokens && body.max_tokens > 2048) body.max_tokens = 2048;
 
     const result = await httpsPost(body);
+
+    // Make sure we got something back
+    if (!result.body || result.body.trim() === '') {
+      return {
+        statusCode: 500,
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ error: { message: 'Empty response from Groq API' } })
+      };
+    }
 
     return {
       statusCode: result.status,
@@ -79,6 +129,7 @@ exports.handler = async function(event) {
       body: result.body
     };
   } catch (err) {
+    console.error('Handler error:', err.message);
     return {
       statusCode: 500,
       headers: { 'Content-Type': 'application/json' },
