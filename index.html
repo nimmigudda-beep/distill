@@ -1618,50 +1618,36 @@ textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px oklch(0.488
   </div>
 
   <!-- ✦ BUILT BY BANNER ✦ -->
-    <div id="builtByBanner" style="
-      width:100%;
-      background: linear-gradient(135deg, oklch(0.488 0.243 264.376), oklch(0.38 0.22 264.376));
-      color: white;
-      padding: 18px 32px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-shrink: 0;
-      position: relative;
-      overflow: hidden;
-      margin-bottom: 0;
-    ">
-      <!-- Decorative background circles -->
-      <div style="position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,0.06);top:-60px;right:120px;pointer-events:none;"></div>
-      <div style="position:absolute;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,0.06);bottom:-40px;right:60px;pointer-events:none;"></div>
-
-      <div style="display:flex;align-items:center;gap:14px;z-index:1;">
-        <img src="https://i.ibb.co/PvMVjGHP/87e8c357-5a43-4ba0-a630-6565da4a40b4-removalai-preview.png" style="width:36px;height:36px;object-fit:contain;filter:brightness(0) invert(1);opacity:0.9;">
-        <div>
-          <div style="font-family:'Playfair Display',serif;font-size:17px;font-weight:700;letter-spacing:-0.01em;line-height:1.2;">
-            Built by <em style="font-style:italic;">Claude</em> &amp; <strong>Parithosh</strong>
-          </div>
-          <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.18em;text-transform:uppercase;opacity:0.7;margin-top:3px;">
-            Powered by Groq · openai/gpt-oss-120b
-          </div>
-        </div>
-      </div>
-
-      <div style="display:flex;align-items:center;gap:10px;z-index:1;">
-        <div style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.15em;text-transform:uppercase;opacity:0.6;text-align:right;">
-          Distill v1.0
-        </div>
-        <button onclick="document.getElementById('builtByBanner').style.display='none'" style="
-          background:rgba(255,255,255,0.15);border:none;color:white;
-          width:24px;height:24px;border-radius:50%;cursor:pointer;
-          font-size:12px;display:flex;align-items:center;justify-content:center;
-          transition:background 0.15s;flex-shrink:0;
-        " onmouseover="this.style.background='rgba(255,255,255,0.25)'"
-           onmouseout="this.style.background='rgba(255,255,255,0.15)'"
-           title="Dismiss">✕</button>
-      </div>
+  <div id="builtByBanner" style="
+    width:100%;
+    background: var(--secondary);
+    border-bottom: 1px solid var(--border);
+    padding: 7px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-shrink: 0;
+    gap: 12px;
+  ">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <img src="https://i.ibb.co/PvMVjGHP/87e8c357-5a43-4ba0-a630-6565da4a40b4-removalai-preview.png" style="width:13px;height:13px;object-fit:contain;opacity:0.5;">
+      <span style="font-family:'DM Mono',monospace;font-size:10px;letter-spacing:0.12em;color:var(--muted-foreground);">
+        Built by <span style="color:var(--foreground);font-weight:500;">Claude</span> &amp; <span style="color:var(--primary);font-weight:500;">Parithosh</span>
+        <span style="margin:0 8px;opacity:0.3;">·</span>
+        Powered by Groq
+        <span style="margin:0 8px;opacity:0.3;">·</span>
+        v1.0
+      </span>
     </div>
+    <button onclick="document.getElementById('builtByBanner').style.display='none'" style="
+      background:none;border:none;cursor:pointer;
+      color:var(--muted-foreground);font-size:11px;
+      padding:2px 5px;border-radius:4px;
+      transition:color 0.15s;line-height:1;flex-shrink:0;
+    " onmouseover="this.style.color='var(--foreground)'"
+       onmouseout="this.style.color='var(--muted-foreground)'"
+       title="Dismiss">✕</button>
+  </div>
 
   <div class="content-scroll">
 
